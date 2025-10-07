@@ -1,5 +1,6 @@
 """FastAPI entrypoint wiring the ChatKit server and REST endpoints."""
-
+import os
+from fastapi.middleware.cors import CORSMiddleware
 from __future__ import annotations
 
 from typing import Any
@@ -16,6 +17,21 @@ from .chat import (
 from .facts import fact_store
 
 app = FastAPI(title="ChatKit API")
+# --- CORS (reads comma-separated origins from env; "*" allows all) ---
+origins_env = os.getenv("CORS_ORIGINS", "").strip()
+if origins_env in ("", "*"):
+    allow_origins = ["*"]
+else:
+    allow_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allow_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# --------------------------------------------------------------------
 
 _chatkit_server: FactAssistantServer | None = create_chatkit_server()
 
