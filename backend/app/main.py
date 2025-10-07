@@ -1,7 +1,8 @@
 """FastAPI entrypoint wiring the ChatKit server and REST endpoints."""
+from __future__ import annotations
+
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from __future__ import annotations
 
 from typing import Any
 
