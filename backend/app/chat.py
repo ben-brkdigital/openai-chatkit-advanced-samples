@@ -84,7 +84,7 @@ async def save_fact(
 # === BRK booking tool ===
 @function_tool(description_override="Share the booking link for BRK Digital consultations.")
 async def schedule_call(
-    ctx: RunContextWrapper[FactAgentContext],
+    ctx: RunContextWrapper[FactContext],
 ) -> dict[str, str]:
     """Return the Calendly booking link for consultations."""
     link = "https://calendly.com/benbrock-hcu/free-consultation-meeting-brk-digital"
