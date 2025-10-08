@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+from openai import OpenAI
 import inspect
 import logging
 from datetime import datetime
@@ -370,6 +372,19 @@ class FactAssistantServer(ChatKitServer[dict[str, Any]]):
         )
 
 
-def create_chatkit_server() -> FactAssistantServer | None:
-    """Return a configured ChatKit server instance if dependencies are available."""
+def create_chatkit_server() -> ChatKitServer | None:
+    """
+    Return a ChatKit server instance.
+
+    If WORKFLOW_ID is set, load the hosted AgentKit workflow.
+    Otherwise, fall back to the local sample FactAssistantServer.
+    """
+    workflow_id = os.getenv("WORKFLOW_ID")
+    if workflow_id:
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        return ChatKitServer.from_workflow_id(
+            workflow_id=workflow_id,
+            openai=client
+        )
+    # Fallback: keep the demo server behavior for local dev
     return FactAssistantServer()
