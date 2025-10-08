@@ -42,3 +42,10 @@ export const STARTER_PROMPTS: StartScreenPrompt[] = [
 ];
 
 export const PLACEHOLDER_INPUT = "Share a fact about yourself";
+
+// === Default Theme Override ===
+export const CHATKIT_THEME = {
+  colorScheme: "dark",   // change to "light" if you want
+  radius: "pill",        // "none" | "sm" | "md" | "lg" | "pill"
+  density: "normal",     // "compact" | "normal" | "cozy"
+};
