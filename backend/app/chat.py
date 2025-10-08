@@ -81,6 +81,18 @@ async def save_fact(
         logging.exception("Failed to save fact")
         return None
 
+# === BRK booking tool ===
+@function_tool(description_override="Share the booking link for BRK Digital consultations.")
+async def schedule_call(
+    ctx: RunContextWrapper[FactAgentContext],
+) -> dict[str, str]:
+    """Return the Calendly booking link for consultations."""
+    link = "https://calendly.com/benbrock-hcu/free-consultation-meeting-brk-digital"
+    ctx.context.client_tool_call = ClientToolCall(
+        name="schedule_call",
+        arguments={"url": link},
+    )
+    return {"message": f"You can book here: {link}"}
 
 def _user_message_text(item: UserMessageItem) -> str:
     """Extract raw user message text."""
@@ -100,7 +112,7 @@ class BrkAssistantServer(ChatKitServer[dict[str, Any]]):
         self.store: MemoryStore = MemoryStore()
         super().__init__(self.store)
 
-        tools = [save_fact]  # remove if no tools are needed
+        tools = [save_fact, schedule_call]  # remove if no tools are needed
 
         self.assistant = Agent[BrkAgentContext](
             model=MODEL,
