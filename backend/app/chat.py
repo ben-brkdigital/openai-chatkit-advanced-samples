@@ -30,7 +30,7 @@ from openai.types.responses import ResponseInputContentParam
 from pydantic import ConfigDict, Field
 
 # import your updated instructions and model
-from .constraints import INSTRUCTIONS, MODEL
+from .constants import INSTRUCTIONS, MODEL
 from .facts import Fact, fact_store
 from .memory_store import MemoryStore
 
