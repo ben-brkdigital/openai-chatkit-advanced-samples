@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from openai import OpenAI
 import inspect
 import logging
 from datetime import datetime
@@ -376,15 +375,15 @@ def create_chatkit_server() -> ChatKitServer | None:
     """
     Return a ChatKit server instance.
 
-    If WORKFLOW_ID is set, load the hosted AgentKit workflow.
-    Otherwise, fall back to the local sample FactAssistantServer.
+    NOTE: The installed openai-chatkit package version doesn't expose
+    ChatKitServer.from_workflow_id. If WORKFLOW_ID is present, we warn and
+    still return the local demo server to stay compatible.
     """
     workflow_id = os.getenv("WORKFLOW_ID")
     if workflow_id:
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        return ChatKitServer.from_workflow_id(
-            workflow_id=workflow_id,
-            openai=client
+        logging.warning(
+            "WORKFLOW_ID=%s is set but this ChatKit version lacks "
+            "from_workflow_id; falling back to the local FactAssistantServer.",
+            workflow_id,
         )
-    # Fallback: keep the demo server behavior for local dev
     return FactAssistantServer()
