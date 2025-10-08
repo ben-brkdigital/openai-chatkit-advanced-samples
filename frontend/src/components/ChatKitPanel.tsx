@@ -27,8 +27,12 @@ export function ChatKitPanel({
 
   const chatkit = useChatKit({
     api: { url: CHATKIT_API_URL, domainKey: CHATKIT_API_DOMAIN_KEY },
+
+    // ✅ Theme updates
     theme: {
-      colorScheme: theme,
+      colorScheme: theme, // light or dark
+      radius: "pill",
+      density: "normal",
       color: {
         grayscale: {
           hue: 220,
@@ -40,25 +44,27 @@ export function ChatKitPanel({
           level: 1,
         },
       },
-      radius: "round",
     },
+
+    // ✅ Start screen
     startScreen: {
       greeting: GREETING,
       prompts: STARTER_PROMPTS,
     },
+
+    // ✅ Input area
     composer: {
       placeholder: PLACEHOLDER_INPUT,
+      attachments: { enabled: false }, // disable file uploads for simplicity
     },
-    threadItemActions: {
-      feedback: false,
-    },
+
+    threadItemActions: { feedback: false },
+
+    // ✅ Tools (theme + record_fact)
     onClientTool: async (invocation) => {
       if (invocation.name === "switch_theme") {
         const requested = invocation.params.theme;
         if (requested === "light" || requested === "dark") {
-          if (import.meta.env.DEV) {
-            console.debug("[ChatKitPanel] switch_theme", requested);
-          }
           onThemeRequest(requested);
           return { success: true };
         }
@@ -68,9 +74,7 @@ export function ChatKitPanel({
       if (invocation.name === "record_fact") {
         const id = String(invocation.params.fact_id ?? "");
         const text = String(invocation.params.fact_text ?? "");
-        if (!id || processedFacts.current.has(id)) {
-          return { success: true };
-        }
+        if (!id || processedFacts.current.has(id)) return { success: true };
         processedFacts.current.add(id);
         void onWidgetAction({
           type: "save",
@@ -82,16 +86,10 @@ export function ChatKitPanel({
 
       return { success: false };
     },
-    onResponseEnd: () => {
-      onResponseEnd();
-    },
-    onThreadChange: () => {
-      processedFacts.current.clear();
-    },
-    onError: ({ error }) => {
-      // ChatKit handles displaying the error to the user
-      console.error("ChatKit error", error);
-    },
+
+    onResponseEnd: () => onResponseEnd(),
+    onThreadChange: () => processedFacts.current.clear(),
+    onError: ({ error }) => console.error("ChatKit error", error),
   });
 
   return (
